@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode;
 
+import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.telemetry;
+
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
@@ -12,11 +14,15 @@ import org.opencv.core.Rect;
 import org.opencv.core.Scalar;
 import org.opencv.imgproc.Imgproc;
 
-public class FirstVisionProcessor implements VisionProcessor {
+import java.io.Console;
 
-    public Rect rectLeft = new Rect(60, 200, 100, 100);
-    public Rect rectMiddle = new Rect(250, 200, 100, 100);
-    public Rect rectRight = new Rect(440, 200, 100, 100);
+public class PropVisionProcessor implements VisionProcessor {
+
+
+    // camera can only see 2 positions at once
+    public Rect rectMiddle = new Rect(200, 240, 90, 90);
+    public Rect rectLeft = new Rect(240, 240, 90, 90);
+    public Rect rectRight = new Rect(410, 200, 90, 90);
     Selected selection = Selected.NONE;
 
     Mat submat = new Mat();
@@ -34,6 +40,9 @@ public class FirstVisionProcessor implements VisionProcessor {
         double satRectLeft = getAvgSaturation(hsvMat, rectLeft);
         double satRectMiddle = getAvgSaturation(hsvMat, rectMiddle);
         double satRectRight = getAvgSaturation(hsvMat, rectRight);
+        System.out.println("Left Rect Sat: " + satRectLeft);
+        System.out.println("Middle Rect Sat: " + satRectMiddle);
+        System.out.println("Right Rect Sat: " + satRectRight);
 
         if ((satRectLeft > satRectMiddle) && (satRectLeft > satRectRight)) {
             return Selected.LEFT;
@@ -104,6 +113,7 @@ public class FirstVisionProcessor implements VisionProcessor {
     public Selected getSelection() {
         return selection;
     }
+
 
     public enum Selected {
         NONE,

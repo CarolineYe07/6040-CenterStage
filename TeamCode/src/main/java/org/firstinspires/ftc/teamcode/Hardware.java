@@ -1,8 +1,10 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import java.lang.reflect.Array;
 import java.util.ArrayList;
@@ -14,21 +16,34 @@ public class Hardware {
 
     private DcMotor leftFront, leftBack, rightFront, rightBack = null;
     private DcMotor encoderLeft, encoderRight, encoderFront = null;
+    private CRServo drone, scuffIntake = null;
+
+    private ElapsedTime runtime;
+
 
     // Constant values here
 
     public Hardware (LinearOpMode opMode) { myOpMode = opMode; }
 
     public void init() {
-        leftFront = myOpMode.hardwareMap.get(DcMotor.class, "leftFront");
-        leftBack = myOpMode.hardwareMap.get(DcMotor.class, "leftBack");
-        rightFront = myOpMode.hardwareMap.get(DcMotor.class, "rightFront");
-        rightBack = myOpMode.hardwareMap.get(DcMotor.class, "rightBack");
 
-        leftFront.setDirection(DcMotorSimple.Direction.FORWARD);
-        leftBack.setDirection(DcMotorSimple.Direction.FORWARD);
-        rightFront.setDirection(DcMotorSimple.Direction.REVERSE);
-        rightBack.setDirection(DcMotorSimple.Direction.REVERSE);
+        runtime = new ElapsedTime();
+
+        leftFront = myOpMode.hardwareMap.get(DcMotor.class, "lf");
+        leftBack = myOpMode.hardwareMap.get(DcMotor.class, "lb");
+        rightFront = myOpMode.hardwareMap.get(DcMotor.class, "rf");
+        rightBack = myOpMode.hardwareMap.get(DcMotor.class, "rb");
+
+        drone = myOpMode.hardwareMap.get(CRServo.class, "drone");
+
+        scuffIntake = myOpMode.hardwareMap.get(CRServo.class, "scuffIntake");
+        scuffIntake.setDirection(DcMotorSimple.Direction.REVERSE);
+
+
+        rightFront.setDirection(DcMotorSimple.Direction.FORWARD);
+        rightBack.setDirection(DcMotorSimple.Direction.FORWARD);
+        leftFront.setDirection(DcMotorSimple.Direction.REVERSE);
+        leftBack.setDirection(DcMotorSimple.Direction.REVERSE);
 
         leftFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         leftBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -77,7 +92,28 @@ public class Hardware {
         rightBack.setPower(rb);
     }
 
-    public void odometry() {
+    public void driveForwardByTime(double seconds, double power) {
+        while (myOpMode.opModeIsActive() && runtime.seconds() < seconds) {
+            leftFront.setPower(power);
+            leftBack.setPower(power);
+            rightFront.setPower(power);
+            rightBack.setPower(power);
+        }
+    }
+
+    public void shootDrone() {
+        runtime.reset();
+        while (myOpMode.opModeIsActive() && runtime.seconds() < 1) {
+            drone.setPower(1);
+        }
+        drone.setPower(0);
+    }
+
+    public void scuffIntakePower(double power) {
+        scuffIntake.setPower(power);
+    }
+
+    public void three_wheel_odo() {
         oldPosRight = currentPosRight;
         oldPosLeft = currentPosLeft;
         currentPosFront = oldPosFront;
@@ -100,5 +136,9 @@ public class Hardware {
         pos[2] += dtheta;
 
         myOpMode.telemetry.addData("hi", "hello");
+    }
+
+    public void two_wheel_odo() {
+
     }
 }
