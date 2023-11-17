@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.vision.VisionPortal;
@@ -16,38 +17,23 @@ public class BasicParkAuto extends LinearOpMode {
     private AprilTagProcessor tagProcessor;
     private VisionPortal visionPortal;
 
+    private ElapsedTime runtime;
 
     @Override
     public void runOpMode() throws InterruptedException {
         Hardware robot = new Hardware(this);
         robot.init();
-        telemetry.addLine("Robot Initialized");
 
-        tagProcessor = AprilTagProcessor.easyCreateWithDefaults();
-        visionPortal = VisionPortal.easyCreateWithDefaults(hardwareMap.get(WebcamName.class, "Webcam 1"), tagProcessor);
-        telemetry.addLine("Vision Initialized");
+        runtime = new ElapsedTime();
 
         waitForStart();
 
-        // turn to face boards to look at april tags
-        // no odo (I cry)
-        robot.setDrivePower(0.5, 0.5, 0.5, 0.5);
-        sleep(500);
-        robot.setDrivePower(0, 0, 0, 0);
-        robot.setDrivePower(0.5, 0.5, 0, 0);
-        sleep(500);
-        robot.setDrivePower(0, 0, 0, 0);
+        runtime.reset();
 
-        if (tagProcessor.getDetections().size() > 0) {
-            AprilTagDetection tag = tagProcessor.getDetections().get(0);
-
-            if (tag.ftcPose.y < 20) {
-                robot.setDrivePower(1, 1, 1, 1);
-                sleep(5000);
-                robot.setDrivePower(0, 0, 0, 0);
-            }
+        while (opModeIsActive() && runtime.milliseconds() < 500) {
+            robot.setDrivePower(0.5, -0.5, -0.5, 0.5);
         }
-
+        robot.setDrivePower(0, 0, 0,0);
 
 
     }

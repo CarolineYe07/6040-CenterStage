@@ -1,9 +1,12 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.IMU;
+import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import java.lang.reflect.Array;
@@ -16,9 +19,15 @@ public class Hardware {
 
     private DcMotor leftFront, leftBack, rightFront, rightBack = null;
     private DcMotor encoderLeft, encoderRight, encoderFront = null;
-    private CRServo drone, scuffIntake = null;
+    private CRServo scuffIntake = null;
+    private Servo drone = null;
+
+    public DcMotor testMotor;
+    public CRServo testServo;
 
     private ElapsedTime runtime;
+
+    // public IMU imu;
 
 
     // Constant values here
@@ -34,10 +43,16 @@ public class Hardware {
         rightFront = myOpMode.hardwareMap.get(DcMotor.class, "rf");
         rightBack = myOpMode.hardwareMap.get(DcMotor.class, "rb");
 
-        drone = myOpMode.hardwareMap.get(CRServo.class, "drone");
+        drone = myOpMode.hardwareMap.get(Servo.class, "drone");
+        drone.setDirection(Servo.Direction.REVERSE);
 
         scuffIntake = myOpMode.hardwareMap.get(CRServo.class, "scuffIntake");
         scuffIntake.setDirection(DcMotorSimple.Direction.REVERSE);
+
+        testMotor = myOpMode.hardwareMap.get(DcMotor.class, "hang");
+        testMotor.setDirection(DcMotorSimple.Direction.REVERSE);
+
+        testServo = myOpMode.hardwareMap.get(CRServo.class, "test");
 
 
         rightFront.setDirection(DcMotorSimple.Direction.FORWARD);
@@ -59,6 +74,11 @@ public class Hardware {
         encoderLeft = leftBack;
         encoderRight = rightBack;
         encoderFront = rightFront;
+
+        // IMU stuff
+        // Retrieve the IMU from the hardware map
+
+
 
         myOpMode.telemetry.addLine("Hardware Initialized");
         myOpMode.telemetry.update();
@@ -101,12 +121,8 @@ public class Hardware {
         }
     }
 
-    public void shootDrone() {
-        runtime.reset();
-        while (myOpMode.opModeIsActive() && runtime.seconds() < 1) {
-            drone.setPower(1);
-        }
-        drone.setPower(0);
+    public void setDroneShooter(double position) {
+        drone.setPosition(position);
     }
 
     public void scuffIntakePower(double power) {

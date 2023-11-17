@@ -16,8 +16,12 @@ public class FieldCentricExternalHardware extends LinearOpMode {
     private AprilTagProcessor tagProcessor;
     private VisionPortal visionPortal;
 
+    private double SPEED_MULTIPLIER;
+    private boolean SLOW_MODE;
+
     @Override
     public void runOpMode() throws InterruptedException {
+
         Hardware robot = new Hardware(this);
 
         robot.init();
@@ -26,8 +30,6 @@ public class FieldCentricExternalHardware extends LinearOpMode {
         tagProcessor = AprilTagProcessor.easyCreateWithDefaults();
         visionPortal = VisionPortal.easyCreateWithDefaults(hardwareMap.get(WebcamName.class, "Webcam 1"), tagProcessor);
 
-
-        // Retrieve the IMU from the hardware map
         IMU imu = hardwareMap.get(IMU.class, "imu");
         // Adjust the orientation parameters to match your robot
         IMU.Parameters parameters = new IMU.Parameters(new RevHubOrientationOnRobot(
@@ -35,6 +37,8 @@ public class FieldCentricExternalHardware extends LinearOpMode {
                 RevHubOrientationOnRobot.UsbFacingDirection.RIGHT));
         // Without this, the REV Hub's orientation is assumed to be logo up / USB forward
         imu.initialize(parameters);
+
+        SPEED_MULTIPLIER = 0.5;
 
         waitForStart();
 
@@ -64,24 +68,59 @@ public class FieldCentricExternalHardware extends LinearOpMode {
             // This ensures all the powers maintain the same ratio,
             // but only if at least one is out of the range [-1, 1]
             double denominator = Math.max(Math.abs(rotY) + Math.abs(rotX) + Math.abs(rx), 1);
-            double frontLeftPower = (rotY + rotX + rx) / denominator / 2;
-            double backLeftPower = (rotY - rotX + rx) / denominator / 2;
-            double frontRightPower = (rotY - rotX - rx) / denominator / 2;
-            double backRightPower = (rotY + rotX - rx) / denominator / 2;
+            double frontLeftPower = (rotY + rotX + rx) / denominator * SPEED_MULTIPLIER;
+            double backLeftPower = (rotY - rotX + rx) / denominator * SPEED_MULTIPLIER;
+            double frontRightPower = (rotY - rotX - rx) / denominator * SPEED_MULTIPLIER;
+            double backRightPower = (rotY + rotX - rx) / denominator * SPEED_MULTIPLIER;
 
 
             robot.setDrivePower(frontLeftPower, backLeftPower, frontRightPower, backRightPower);
 
+
             if (gamepad1.left_bumper) {
+                if (SLOW_MODE) {
+                    SLOW_MODE = false;
+                    SPEED_MULTIPLIER = 0.75;
+                } else {
+                    SLOW_MODE = true;
+                    SPEED_MULTIPLIER = 0.5;
+                }
+            }
+
+            // hang motor
+            if (gamepad2.right_trigger > 0) {
+                robot.testMotor.setPower(1);
+            } else if (gamepad2.left_trigger > 0) {
+                robot.testMotor.setPower(-1);
+            } else {
+                robot.testMotor.setPower(0);
+            }
+
+
+            // hang servo
+            if (gamepad2.a) {
+                robot.testServo.setPower(1);
+            } else {
+                robot.testMotor.setPower(0);
+            }
+
+
+            // scuff intake
+            if (gamepad2.left_bumper) {
                 robot.scuffIntakePower(-0.5);
 
-            } else if (gamepad1.right_bumper) {
+            } else if (gamepad2.right_bumper) {
                 robot.scuffIntakePower(0.5);
 
             } else {
                 robot.scuffIntakePower(0);
                 telemetry.addLine("power to 0");
                 telemetry.update();
+            }
+
+            // drone launch
+            if (gamepad2.x) {
+                robot.setDroneShooter(1);
             }
 
         }
