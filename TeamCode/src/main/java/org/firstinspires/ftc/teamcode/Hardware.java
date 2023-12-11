@@ -19,11 +19,10 @@ public class Hardware {
 
     private DcMotor leftFront, leftBack, rightFront, rightBack = null;
     private DcMotor encoderLeft, encoderRight, encoderFront = null;
-    private CRServo scuffIntake = null;
     private Servo drone = null;
 
-    public DcMotor testMotor;
-    public CRServo testServo;
+    private DcMotor hangMotor;
+    public CRServo hook;
 
     private ElapsedTime runtime;
 
@@ -46,13 +45,10 @@ public class Hardware {
         drone = myOpMode.hardwareMap.get(Servo.class, "drone");
         drone.setDirection(Servo.Direction.REVERSE);
 
-        scuffIntake = myOpMode.hardwareMap.get(CRServo.class, "scuffIntake");
-        scuffIntake.setDirection(DcMotorSimple.Direction.REVERSE);
+        hangMotor = myOpMode.hardwareMap.get(DcMotor.class, "hang");
+        hangMotor.setDirection(DcMotorSimple.Direction.REVERSE);
 
-        testMotor = myOpMode.hardwareMap.get(DcMotor.class, "hang");
-        testMotor.setDirection(DcMotorSimple.Direction.REVERSE);
-
-        testServo = myOpMode.hardwareMap.get(CRServo.class, "test");
+        hook = myOpMode.hardwareMap.get(CRServo.class, "hook");
 
 
         rightFront.setDirection(DcMotorSimple.Direction.FORWARD);
@@ -112,12 +108,13 @@ public class Hardware {
         rightBack.setPower(rb);
     }
 
-    public void driveForwardByTime(double seconds, double power) {
+    public void driveByTime(double seconds, double lf, double lb, double rf, double rb) {
+        runtime.reset();
         while (myOpMode.opModeIsActive() && runtime.seconds() < seconds) {
-            leftFront.setPower(power);
-            leftBack.setPower(power);
-            rightFront.setPower(power);
-            rightBack.setPower(power);
+            leftFront.setPower(lf);
+            leftBack.setPower(lb);
+            rightFront.setPower(rf);
+            rightBack.setPower(rb);
         }
     }
 
@@ -125,9 +122,7 @@ public class Hardware {
         drone.setPosition(position);
     }
 
-    public void scuffIntakePower(double power) {
-        scuffIntake.setPower(power);
-    }
+    public void hangMotorPower(double power) { hangMotor.setPower(power); }
 
     public void three_wheel_odo() {
         oldPosRight = currentPosRight;
@@ -152,9 +147,5 @@ public class Hardware {
         pos[2] += dtheta;
 
         myOpMode.telemetry.addData("hi", "hello");
-    }
-
-    public void two_wheel_odo() {
-
     }
 }

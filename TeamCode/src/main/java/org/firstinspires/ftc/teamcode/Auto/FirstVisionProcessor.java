@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.Auto;
 
 import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.telemetry;
 
@@ -16,13 +16,13 @@ import org.opencv.imgproc.Imgproc;
 
 import java.io.Console;
 
-public class PropVisionProcessor implements VisionProcessor {
+public class FirstVisionProcessor implements VisionProcessor {
 
 
     // camera can only see 2 positions at once
-    public Rect rectMiddle = new Rect(200, 240, 90, 90);
-    public Rect rectLeft = new Rect(240, 240, 90, 90);
-    public Rect rectRight = new Rect(410, 200, 90, 90);
+    public Rect rectRight = new Rect(200, 240, 120, 120);
+    public Rect rectLeft = new Rect(210, 150, 150, 150);
+    public Rect rectMiddle = new Rect(450, 100, 150, 150);
     Selected selection = Selected.NONE;
 
     Mat submat = new Mat();
@@ -40,9 +40,7 @@ public class PropVisionProcessor implements VisionProcessor {
         double satRectLeft = getAvgSaturation(hsvMat, rectLeft);
         double satRectMiddle = getAvgSaturation(hsvMat, rectMiddle);
         double satRectRight = getAvgSaturation(hsvMat, rectRight);
-        System.out.println("Left Rect Sat: " + satRectLeft);
-        System.out.println("Middle Rect Sat: " + satRectMiddle);
-        System.out.println("Right Rect Sat: " + satRectRight);
+
 
         if ((satRectLeft > satRectMiddle) && (satRectLeft > satRectRight)) {
             return Selected.LEFT;

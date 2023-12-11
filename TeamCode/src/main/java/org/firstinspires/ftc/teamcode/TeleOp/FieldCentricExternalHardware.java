@@ -1,35 +1,36 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.TeleOp;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
+
+import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.teamcode.Hardware;
+import org.firstinspires.ftc.vision.VisionPortal;
+import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
 
 @TeleOp
-public class FieldCentricOld extends LinearOpMode {
+public class FieldCentricExternalHardware extends LinearOpMode {
+
+    private AprilTagProcessor tagProcessor;
+    private VisionPortal visionPortal;
+
+    private double SPEED_MULTIPLIER;
+    private boolean SLOW_MODE;
 
     @Override
     public void runOpMode() throws InterruptedException {
 
-        double SPEED_COEFF = 0.5;
-        // Declare our motors
-        // Make sure your ID's match your configuration
-        DcMotor frontLeftMotor = hardwareMap.dcMotor.get("lf");
-        DcMotor backLeftMotor = hardwareMap.dcMotor.get("lb");
-        DcMotor frontRightMotor = hardwareMap.dcMotor.get("rf");
-        DcMotor backRightMotor = hardwareMap.dcMotor.get("rb");
+        Hardware robot = new Hardware(this);
 
-        // Reverse the right side motors. This may be wrong for your setup.
-        // If your robot moves backwards when commanded to go forwards,
-        // reverse the left side instead.
-        // See the note about this earlier on this page.
-        frontLeftMotor.setDirection(DcMotorSimple.Direction.REVERSE);
-        backLeftMotor.setDirection(DcMotorSimple.Direction.REVERSE);
+        robot.init();
 
-        // Retrieve the IMU from the hardware map
+        // attempting to write some code that sets the max speed lower when near april tags on the board
+        tagProcessor = AprilTagProcessor.easyCreateWithDefaults();
+        visionPortal = VisionPortal.easyCreateWithDefaults(hardwareMap.get(WebcamName.class, "Webcam 1"), tagProcessor);
+
         IMU imu = hardwareMap.get(IMU.class, "imu");
         // Adjust the orientation parameters to match your robot
         IMU.Parameters parameters = new IMU.Parameters(new RevHubOrientationOnRobot(
@@ -37,6 +38,8 @@ public class FieldCentricOld extends LinearOpMode {
                 RevHubOrientationOnRobot.UsbFacingDirection.RIGHT));
         // Without this, the REV Hub's orientation is assumed to be logo up / USB forward
         imu.initialize(parameters);
+
+        SPEED_MULTIPLIER = 0.9;
 
         waitForStart();
 
@@ -66,15 +69,47 @@ public class FieldCentricOld extends LinearOpMode {
             // This ensures all the powers maintain the same ratio,
             // but only if at least one is out of the range [-1, 1]
             double denominator = Math.max(Math.abs(rotY) + Math.abs(rotX) + Math.abs(rx), 1);
-            double frontLeftPower = (rotY + rotX + rx) / denominator * SPEED_COEFF;
-            double backLeftPower = (rotY - rotX + rx) / denominator * SPEED_COEFF;
-            double frontRightPower = (rotY - rotX - rx) / denominator * SPEED_COEFF;
-            double backRightPower = (rotY + rotX - rx) / denominator * SPEED_COEFF;
+            double frontLeftPower = (rotY + rotX + rx) / denominator * SPEED_MULTIPLIER;
+            double backLeftPower = (rotY - rotX + rx) / denominator * SPEED_MULTIPLIER;
+            double frontRightPower = (rotY - rotX - rx) / denominator * SPEED_MULTIPLIER;
+            double backRightPower = (rotY + rotX - rx) / denominator * SPEED_MULTIPLIER;
 
-            frontLeftMotor.setPower(frontLeftPower);
-            backLeftMotor.setPower(backLeftPower);
-            frontRightMotor.setPower(frontRightPower);
-            backRightMotor.setPower(backRightPower);
+
+            robot.setDrivePower(frontLeftPower, backLeftPower, frontRightPower, backRightPower);
+
+
+            if (gamepad1.left_bumper) {
+                SPEED_MULTIPLIER = 0.5;
+            } else {
+                SPEED_MULTIPLIER = 0.9;
+            }
+
+            // hang motor
+            if (gamepad2.right_trigger > 0) {
+                robot.hangMotorPower(1);
+            } else if (gamepad2.left_trigger > 0) {
+                robot.hangMotorPower(-1);
+            } else {
+                robot.hangMotorPower(0);
+            }
+
+
+            // hang servo
+            if (gamepad2.a) {
+                robot.hook.setPower(1);
+            } else {
+                robot.hook.setPower(0);
+            }
+
+
+            // scuff intake
+
+
+            // drone launch
+            if (gamepad2.x) {
+                robot.setDroneShooter(1);
+            }
+
         }
     }
 }
