@@ -31,6 +31,7 @@ public class BasicDrive extends LinearOpMode {
     private double speed_multiplier;
 
     private ElapsedTime runtime = new ElapsedTime();
+    private ElapsedTime intakeTimer = new ElapsedTime();
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -142,11 +143,19 @@ public class BasicDrive extends LinearOpMode {
             boolean pressed = gamepad2.y;
 
             if (pressed && !pressedLastIteration) {
-                leftIntake.setPosition(1);
-                rightIntake.setPosition(-1);
-            } else if (!pressed){
-                leftIntake.setPosition(-1);
-                rightIntake.setPosition(1);
+                isOpen = !isOpen;
+
+                if (isOpen) {
+                    leftIntake.setPosition(1);
+                    rightIntake.setPosition(-1);
+                    isOpen = false;
+
+                } else if (!isOpen) {
+                    leftIntake.setPosition(-1);
+                    rightIntake.setPosition(1);
+                    isOpen = true;
+                }
+
             }
 
             pressedLastIteration = pressed;
