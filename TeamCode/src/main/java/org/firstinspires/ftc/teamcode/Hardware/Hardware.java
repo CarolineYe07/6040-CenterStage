@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.Hardware;
 
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -19,17 +19,11 @@ public class Hardware {
 
     private DcMotor leftFront, leftBack, rightFront, rightBack = null;
     private DcMotor encoderLeft, encoderRight, encoderFront = null;
-    private Servo drone = null;
 
-    private DcMotor hangMotor;
-    public CRServo hook;
+    // private DcMotor hangMotor;
+    // public CRServo hook;
 
     private ElapsedTime runtime;
-
-    // public IMU imu;
-
-
-    // Constant values here
 
     public Hardware (LinearOpMode opMode) { myOpMode = opMode; }
 
@@ -42,13 +36,12 @@ public class Hardware {
         rightFront = myOpMode.hardwareMap.get(DcMotor.class, "rf");
         rightBack = myOpMode.hardwareMap.get(DcMotor.class, "rb");
 
-        drone = myOpMode.hardwareMap.get(Servo.class, "drone");
-        drone.setDirection(Servo.Direction.REVERSE);
-
+        /*
         hangMotor = myOpMode.hardwareMap.get(DcMotor.class, "hang");
         hangMotor.setDirection(DcMotorSimple.Direction.REVERSE);
 
         hook = myOpMode.hardwareMap.get(CRServo.class, "hook");
+         */
 
 
         rightFront.setDirection(DcMotorSimple.Direction.FORWARD);
@@ -118,11 +111,7 @@ public class Hardware {
         }
     }
 
-    public void setDroneShooter(double position) {
-        drone.setPosition(position);
-    }
-
-    public void hangMotorPower(double power) { hangMotor.setPower(power); }
+    // public void hangMotorPower(double power) { hangMotor.setPower(power); }
 
     public void three_wheel_odo() {
         oldPosRight = currentPosRight;

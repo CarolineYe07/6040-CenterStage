@@ -1,7 +1,5 @@
 package org.firstinspires.ftc.teamcode.Auto;
 
-import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.telemetry;
-
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
@@ -14,23 +12,21 @@ import org.opencv.core.Rect;
 import org.opencv.core.Scalar;
 import org.opencv.imgproc.Imgproc;
 
-import java.io.Console;
-
 public class PropVisionProcessor implements VisionProcessor {
 
 
 
     // camera can only see 2 positions at once
     // public Rect rectRight = new Rect(200, 240, 120, 120);
-    public Rect rectMiddle = new Rect(30, 30, 150, 150);
-    public Rect rectRight = new Rect(390, 90, 150, 150);
+    public Rect rectLeft = new Rect(30, 100, 150, 150);
+    public Rect rectMiddle = new Rect(390, 10, 150, 150);
     Selected selection = Selected.NONE;
 
     Mat submat = new Mat();
     Mat hsvMat = new Mat();
 
+    double satRectLeft = 0;
     double satRectMiddle = 0;
-    double satRectRight = 0;
 
     double saturation = 60;
 
@@ -44,15 +40,15 @@ public class PropVisionProcessor implements VisionProcessor {
     public Object processFrame(Mat frame, long captureTimeNanos) {
         Imgproc.cvtColor(frame, hsvMat, Imgproc.COLOR_RGB2HSV);
 
+        satRectLeft = getAvgSaturation(hsvMat, rectLeft);
         satRectMiddle = getAvgSaturation(hsvMat, rectMiddle);
-        satRectRight = getAvgSaturation(hsvMat, rectRight);
 
-        if ((satRectRight > satRectMiddle) && (satRectRight > saturation)) {
-            return Selected.RIGHT;
-        } else if ((satRectMiddle > satRectRight) && (satRectMiddle > saturation)) {
+        if ((satRectMiddle > satRectLeft) && (satRectMiddle > saturation)) {
             return Selected.MIDDLE;
+        } else if ((satRectLeft > satRectMiddle) && (satRectLeft > saturation)) {
+            return Selected.LEFT;
         }
-        return Selected.LEFT;
+        return Selected.RIGHT;
 
     }
 
@@ -82,21 +78,25 @@ public class PropVisionProcessor implements VisionProcessor {
         nonSelectedPaint.setColor(Color.GREEN);
 
         // 1.67
-        android.graphics.Rect drawRectangleRight = makeGraphicsRect(rectRight, scaleBmpPxToCanvasPx);
         android.graphics.Rect drawRectangleMiddle = makeGraphicsRect(rectMiddle, scaleBmpPxToCanvasPx);
+        android.graphics.Rect drawRectangleLeft = makeGraphicsRect(rectLeft, scaleBmpPxToCanvasPx);
 
 
         selection = (Selected) userContext;
         switch (selection) {
             case LEFT:
-                canvas.drawRect(drawRectangleRight, selectedPaint);
-                canvas.drawRect(drawRectangleMiddle, nonSelectedPaint);
+                canvas.drawRect(drawRectangleMiddle, selectedPaint);
+                canvas.drawRect(drawRectangleLeft, nonSelectedPaint);
                 break;
 
             case MIDDLE:
-                canvas.drawRect(drawRectangleRight, nonSelectedPaint);
-                canvas.drawRect(drawRectangleMiddle, selectedPaint);
+                canvas.drawRect(drawRectangleMiddle, nonSelectedPaint);
+                canvas.drawRect(drawRectangleLeft, selectedPaint);
                 break;
+
+            case RIGHT:
+                canvas.drawRect(drawRectangleLeft, nonSelectedPaint);
+                canvas.drawRect(drawRectangleMiddle, nonSelectedPaint);
 
         }
     }

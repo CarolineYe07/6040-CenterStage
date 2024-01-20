@@ -5,8 +5,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
-import org.firstinspires.ftc.teamcode.Auto.PropVisionProcessor;
-import org.firstinspires.ftc.teamcode.Hardware;
+import org.firstinspires.ftc.teamcode.Hardware.Hardware;
 import org.firstinspires.ftc.vision.VisionPortal;
 
 @Autonomous
@@ -39,8 +38,6 @@ public class PropVisionAuto extends LinearOpMode {
         telemetry.addLine("Robot Initialized");
         telemetry.update();
 
-        Servo lClamp = hardwareMap.get(Servo.class, "lClamp");
-
 
 
         waitForStart();
@@ -51,11 +48,21 @@ public class PropVisionAuto extends LinearOpMode {
         while (opModeIsActive()) {
 
             telemetry.addData("Selection: ", visionProcessor.getSelection());
-            telemetry.addData("Right Rect Sat: ", visionProcessor.satRectRight);
             telemetry.addData("Middle Rect Sat: ", visionProcessor.satRectMiddle);
+            telemetry.addData("Left Rect Sat: ", visionProcessor.satRectLeft);
             telemetry.update();
 
 
+            if (zone == PropVisionProcessor.Selected.MIDDLE) {
+                robot.setDrivePower(-0.5, -0.5, -0.5, -0.5);
+                sleep(1000);
+            } else if (zone == PropVisionProcessor.Selected.RIGHT) {
+
+            } else {
+
+            }
+
+            /**
             if (zone == PropVisionProcessor.Selected.LEFT) {
                 // move forward (strafe because robot starts turned)
                 robot.setDrivePower(-SPEED, SPEED, SPEED, -SPEED);
@@ -106,6 +113,7 @@ public class PropVisionAuto extends LinearOpMode {
                 // release pixel
                 lClamp.setPosition(1);
             }
+             **/
         }
     }
 }

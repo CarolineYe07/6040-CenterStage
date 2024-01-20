@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.TeleOp;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -7,11 +8,11 @@ import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
-import org.firstinspires.ftc.teamcode.Hardware;
+import org.firstinspires.ftc.teamcode.Hardware.Hardware;
 import org.firstinspires.ftc.vision.VisionPortal;
 import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
 
-@TeleOp
+@Disabled
 public class FieldCentricExternalHardware extends LinearOpMode {
 
     private AprilTagProcessor tagProcessor;
@@ -84,6 +85,7 @@ public class FieldCentricExternalHardware extends LinearOpMode {
                 SPEED_MULTIPLIER = 0.9;
             }
 
+            /*
             // hang motor
             if (gamepad2.right_trigger > 0) {
                 robot.hangMotorPower(1);
@@ -100,15 +102,18 @@ public class FieldCentricExternalHardware extends LinearOpMode {
             } else {
                 robot.hook.setPower(0);
             }
+             */
 
 
             // scuff intake
 
 
             // drone launch
+            /*
             if (gamepad2.x) {
                 robot.setDroneShooter(1);
             }
+             */
 
         }
     }
