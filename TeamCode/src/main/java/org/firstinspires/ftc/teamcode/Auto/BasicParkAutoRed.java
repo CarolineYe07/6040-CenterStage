@@ -4,11 +4,13 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.teamcode.Hardware.Hardware;
 
-@Disabled
+@Autonomous
 public class BasicParkAutoRed extends LinearOpMode {
+
 
 
     // private ElapsedTime runtime;
@@ -18,7 +20,8 @@ public class BasicParkAutoRed extends LinearOpMode {
         Hardware robot = new Hardware(this);
         robot.init();
 
-        DcMotor intake = hardwareMap.dcMotor.get("intake");
+        Servo leftIntake = hardwareMap.get(Servo.class, "leftIntake");
+        Servo rightIntake = hardwareMap.get(Servo.class, "rightIntake");
 
         // runtime = new ElapsedTime();
 
@@ -28,16 +31,14 @@ public class BasicParkAutoRed extends LinearOpMode {
 
         while (opModeIsActive()) {
             robot.setDrivePower(0.5, 0.5, 0.5, 0.5);
-            sleep(100);
-            robot.setDrivePower(0, 0, 0,0);
+            sleep(50);
 
             robot.setDrivePower(0.5, -0.5, -0.5, 0.5);
-            sleep(3000);
-            robot.setDrivePower(0,0,0,0);
+            sleep(2000);
 
-            intake.setPower(0.5);
-            sleep(500);
-            intake.setPower(0);
+            robot.setDrivePower(-0.5, 0.5, 0.5, -       0.5);
+            sleep(300);
+
             break;
         }
 

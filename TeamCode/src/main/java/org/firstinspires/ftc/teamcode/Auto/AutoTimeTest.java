@@ -18,8 +18,9 @@ public class AutoTimeTest extends LinearOpMode {
         waitForStart();
 
         if (zone == PropVisionProcessor.Selected.MIDDLE) {
+            // drive forward
             robot.setDrivePower(-0.5, -0.5, -0.5, -0.5);
-            sleep(1200);
+            sleep(1250);
             robot.setDrivePower(0, 0, 0,0);
 
             robot.setDrivePower(0.5, 0.5, 0.5,0.5);
@@ -31,24 +32,37 @@ public class AutoTimeTest extends LinearOpMode {
             robot.setDrivePower(0,0,0,0);
 
         } else if (zone == PropVisionProcessor.Selected.LEFT) {
+
+            telemetry.addLine("Driving forward");
+            telemetry.update();
             robot.setDrivePower(-0.5, -0.5, -0.5, -0.5);
-            sleep(1100);
+            sleep(1000);
             robot.setDrivePower(0, 0, 0,0);
 
+            telemetry.addLine("Turn 90 degrees");
+            telemetry.update();
             // pretty much 90 degrees?
             robot.setDrivePower(-0.5, -0.5, 0.5, 0.5);
             sleep(950);
 
+            telemetry.addLine("Push pixel backwards to line");
+            telemetry.update();
             robot.setDrivePower(0.5, 0.5, 0.5, 0.5);
             sleep(100);
 
+
             robot.setDrivePower(-0.5, -0.5, -0.5,-0.5);
-            sleep(500);
+            sleep(400);
+
+
+            robot.setDrivePower(0.5, 0.5, 0.5, 0.5);
+            sleep(200);
+
 
             robot.setDrivePower(0.5, -0.5, -0.5, 0.5);
-            sleep(900);
+            sleep(1000);
 
-            robot.setDrivePower(-0.5, -0.5, -0.5, -0.5);
+            robot.setDrivePower(0.5, 0.5, 0.5, 0.5);
             sleep(3000);
 
         }

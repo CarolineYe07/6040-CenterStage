@@ -53,6 +53,8 @@ public class PropVisionAuto extends LinearOpMode {
             telemetry.update();
 
 
+
+            /**
             if (zone == PropVisionProcessor.Selected.MIDDLE) {
                 robot.setDrivePower(-0.5, -0.5, -0.5, -0.5);
                 sleep(1000);
@@ -61,6 +63,7 @@ public class PropVisionAuto extends LinearOpMode {
             } else {
 
             }
+             **/
 
             /**
             if (zone == PropVisionProcessor.Selected.LEFT) {

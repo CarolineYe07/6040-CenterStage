@@ -25,6 +25,8 @@ public class BasicDrive extends LinearOpMode {
     private Servo rightIntake;
     private DcMotor leftHang;
     private DcMotor rightHang;
+    private DcMotor leftSlides;
+    private DcMotor rightSlides;
 
     private int armPos;
 
@@ -50,10 +52,13 @@ public class BasicDrive extends LinearOpMode {
         drone = hardwareMap.get(CRServo.class, "drone");
         leftIntake = hardwareMap.get(Servo.class, "leftIntake");
         rightIntake = hardwareMap.get(Servo.class, "rightIntake");
-        leftHang = hardwareMap.get(DcMotor.class, "leftHang");
+        //leftHang = hardwareMap.get(DcMotor.class, "leftHang");
         rightHang = hardwareMap.get(DcMotor.class, "rightHang");
+        leftSlides = hardwareMap.get(DcMotor.class, "leftSlides");
+        rightSlides = hardwareMap.get(DcMotor.class, "rightSlides");
 
-        leftHang.setDirection(DcMotorSimple.Direction.REVERSE);
+
+        rightSlides.setDirection(DcMotorSimple.Direction.REVERSE);
 
 
         arm.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -63,7 +68,7 @@ public class BasicDrive extends LinearOpMode {
         wrist.setPosition(0.05);
         rotator.setPosition(0);
         boolean isOpen = false;
-        boolean pressedLastIteration = gamepad2.y;
+        boolean pressedLastIteration = gamepad1.y;
 
 
         lf.setDirection(DcMotor.Direction.REVERSE);
@@ -127,6 +132,7 @@ public class BasicDrive extends LinearOpMode {
             }
 
             // Run hang motors
+            /**
             if (gamepad1.right_trigger > 0) {
                 leftHang.setPower(.5);
                 rightHang.setPower(.5);
@@ -137,13 +143,22 @@ public class BasicDrive extends LinearOpMode {
                 leftHang.setPower(0);
                 rightHang.setPower(0);
             }
+             **/
 
+
+            // hang test
+            if (gamepad1.x) {
+                rightHang.setPower(1);
+            } else if (gamepad2.y) {
+                rightHang.setPower(-1);
+            } else {
+                rightHang.setPower(0);
+            }
 
             //Intake toggle
             boolean pressed = gamepad2.y;
 
             if (pressed && !pressedLastIteration) {
-                isOpen = !isOpen;
 
                 if (isOpen) {
                     leftIntake.setPosition(1);
@@ -205,10 +220,10 @@ public class BasicDrive extends LinearOpMode {
 
                 //Pick up pixel and bring up.
             } else if(gamepad2.a){
-
+                runtime.reset();
                 arm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER );
                 clamp.setPower(-1);
-                pause(250);
+                pause(500);
                 moveArm(100, .35);
                 pause(250);
                 wrist.setPosition(1);
@@ -222,12 +237,17 @@ public class BasicDrive extends LinearOpMode {
                 arm.setPower(gamepad2.left_stick_x * .5);
             }
 
+            /**
             // arm rest position
             if (!arm.isBusy()) {
                 arm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
                 moveArm(40, .35);
                 pause(250);
             }
+             **/
+
+            leftSlides.setPower(gamepad2.right_stick_y);
+            rightSlides.setPower(gamepad2.right_stick_y);
         }
 
     }

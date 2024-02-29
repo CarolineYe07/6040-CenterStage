@@ -18,8 +18,8 @@ public class PropVisionProcessor implements VisionProcessor {
 
     // camera can only see 2 positions at once
     // public Rect rectRight = new Rect(200, 240, 120, 120);
-    public Rect rectLeft = new Rect(30, 100, 150, 150);
-    public Rect rectMiddle = new Rect(390, 10, 150, 150);
+    public Rect rectLeft = new Rect(140, 120, 150, 150);
+    public Rect rectMiddle = new Rect(450, 50, 150, 150);
     Selected selection = Selected.NONE;
 
     Mat submat = new Mat();
